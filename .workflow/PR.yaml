@@ -16,7 +16,7 @@ jobs:
         id: build_changelog
         uses: mikepenz/release-changelog-builder-action@v5.0.0
         with:
-          baseUrl: https://github.deutsche-boerse.de/api/v3
+          baseUrl: #paste_github_enterprise_api_server_link
           fromTag: ${{ github.base_ref }}
           toTag: ${{ github.head_ref }}
           mode: "COMMIT"
