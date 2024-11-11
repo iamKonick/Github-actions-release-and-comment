@@ -1,0 +1,42 @@
+name: Check PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+jobs:
+  check-tag:
+    runs-on: self-hosted
+    permissions: write-all
+    steps:
+      - uses: "actions/checkout@v4"
+
+ 
+      - name: "Build Changelog"
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v5.0.0
+        with:
+          baseUrl: #paste_github_enterprise_api_server_link
+          fromTag: ${{ github.base_ref }}
+          toTag: ${{ github.head_ref }}
+          mode: "COMMIT"
+      
+      - name: Store Changelog
+      # Put output through env variable to make it robust to quotes
+        env:
+           CHANGELOG: ${{steps.build_changelog.outputs.changelog}}
+        run: |
+             echo "$CHANGELOG" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment PR with changelog
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: ${{ steps.build_changelog.outputs.changelog }}
+
+    
+
+
+              
+      
+
+          
