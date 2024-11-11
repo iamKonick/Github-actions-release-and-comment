@@ -15,6 +15,3 @@ The workflow is triggered by pull request events and follows these steps:
 2. **Create Release**: Upon merging, the workflow uses the pull request titles to generate release notes and create a new release.
 3. **Add Self-Review Comment**: When a pull request is created, the workflow adds a comment reminding the developer to perform a self-review.
 
-## Example Workflow File
-
-Below is an example of the GitHub Actions workflow file:
