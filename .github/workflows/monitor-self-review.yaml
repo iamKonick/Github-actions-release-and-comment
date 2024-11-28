@@ -1,5 +1,3 @@
-name: Monitor Self Review
-
 on:
   issue_comment:
     types: [created, edited]
@@ -11,10 +9,9 @@ jobs:
     steps:
     - name: Check if self-review is completed
       if: ${{ github.event.comment.body == '* [x] Self-review completed' }}
-      run: echo "Self-review checkbox checked. Triggering the next workflow..."
-      
-      # Trigger the next workflow or steps here
-    - name: Trigger compile and test
       run: |
-        echo "Compiling code and running unit tests..."
-        # Add your compile and test commands here
+        echo "Self-review checkbox checked. Triggering the next workflow..."
+        curl -X POST -H "Accept: application/vnd.github.v3+json" \
+        -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        https://api.github.com/repos/${{ github.repository }}/dispatches \
+        -d '{"event_type":"self-review-completed"}'
