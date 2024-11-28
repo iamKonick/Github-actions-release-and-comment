@@ -1,0 +1,20 @@
+name: Monitor Self Review
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  monitor-self-review:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check if self-review is completed
+      if: ${{ github.event.comment.body == '* [x] Self-review completed' }}
+      run: echo "Self-review checkbox checked. Triggering the next workflow..."
+      
+      # Trigger the next workflow or steps here
+      - name: Trigger compile and test
+        run: |
+          echo "Compiling code and running unit tests..."
+          # Add your compile and test commands here
