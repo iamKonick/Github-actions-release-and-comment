@@ -14,7 +14,7 @@ jobs:
       run: echo "Self-review checkbox checked. Triggering the next workflow..."
       
       # Trigger the next workflow or steps here
-      - name: Trigger compile and test
-        run: |
-          echo "Compiling code and running unit tests..."
-          # Add your compile and test commands here
+    - name: Trigger compile and test
+      run: |
+        echo "Compiling code and running unit tests..."
+        # Add your compile and test commands here
