@@ -1,3 +1,5 @@
+name: Monitor Self Review
+
 on:
   issue_comment:
     types: [created, edited]
@@ -8,10 +10,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check if self-review is completed
-      if: ${{ github.event.comment.body == '* [x] Self-review completed' }}
+      id: check-review
       run: |
-        echo "Self-review checkbox checked. Triggering the next workflow..."
-        curl -X POST -H "Accept: application/vnd.github.v3+json" \
-        -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-        https://api.github.com/repos/${{ github.repository }}/dispatches \
-        -d '{"event_type":"self-review-completed"}'
+        echo "Checking if self-review is completed..."
+        if [[ "${{ github.event.comment.body }}" == *"[x] Self-review completed"* ]]; then
+          echo "Self-review checkbox checked. Triggering the next workflow..."
+          echo "::set-output name=trigger::true"
+        else
+          echo "Self-review checkbox not checked."
+          echo "::set-output name=trigger::false"
+        fi
+
+    - name: Trigger compile and test workflow
+      if: steps.check-review.outputs.trigger == 'true'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          github.rest.repos.createDispatchEvent({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            event_type: 'self-review-completed'
+          })
