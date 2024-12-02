@@ -31,7 +31,7 @@ jobs:
 
   update-comment:
     needs: check-comment
-    if: ${{ steps.check-comment.outputs.selfCheckDone == 'true' }} # Corrected reference to step output
+    if: ${{ steps.check-comment.outputs.selfCheckDone == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -41,15 +41,18 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const issueNumber = context.issue.number;
-            const comments = await github.issues.listComments({
+            const githubClient = github.getOctokit(process.env.GITHUB_TOKEN); // Explicitly initialize GitHub client
+            const comments = await githubClient.issues.listComments({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issueNumber
             });
+
+            console.log(comments.data); // Log the fetched comments for debugging
             const comment = comments.data.find(c => c.body.includes('Self-check: Please confirm'));
             if (comment) {
               const updatedBody = comment.body.replace('**Waiting for self-check**', '**All checks have passed**');
-              await github.issues.updateComment({
+              await githubClient.issues.updateComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: comment.id,
