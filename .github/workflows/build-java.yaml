@@ -1,0 +1,36 @@
+# .github/workflows/build-java-application.yml
+name: Build Maven Java Application
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build-application:
+    if: ${{ github.event.comment.body == '/self-check-done' || (github.event.comment.body == 'Self-check: Please confirm' && github.event.comment.body.includes('- [x] Self-check')) }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'  # You can change to the required Java version
+
+      - name: Build the application with Maven
+        run: |
+          mvn clean install
+          
+      - name: Run unit tests
+        run: |
+          mvn test
+
+      - name: Final Echo: Application Built Done
+        run: |
+          echo "Application Built Done"
