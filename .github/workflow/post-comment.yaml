@@ -1,0 +1,24 @@
+name: Post Checklist Comment
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post Checklist Comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          issue-number: ${{ github.event.number }}
+          body: |
+            ### Build Progress Checklist
+            - [ ] Step 1: Developer has reviewed and checked this box.
+            - [ ] Step 2: Build process in progress.
+            - [ ] Step 3: Build complete.
+            #### Status: Step 1 of 3 is completed.
