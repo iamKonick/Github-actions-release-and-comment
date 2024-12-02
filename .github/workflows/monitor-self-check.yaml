@@ -1,0 +1,54 @@
+# .github/workflows/monitor-self-check.yml
+name: Monitor Self-Check
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for Self-Check Command
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = context.payload.comment.body;
+            if (comment.includes('/self-check-done')) {
+              core.setOutput('selfCheckDone', 'true');
+            } else {
+              core.setOutput('selfCheckDone', 'false');
+            }
+
+  update-comment:
+    if: steps.check-comment.outputs.selfCheckDone == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update Status
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.issue.number;
+            const comments = await github.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            const comment = comments.data.find(c => c.body.includes('Self-check: Please confirm'));
+            if (comment) {
+              const updatedBody = comment.body.replace('**Waiting for self-check**', '**All checks have passed**');
+              await github.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: updatedBody
+              });
+            }
