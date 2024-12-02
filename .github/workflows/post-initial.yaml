@@ -1,0 +1,25 @@
+# .github/workflows/post-initial-comment.yml
+name: Post Initial Checklist
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  post-comment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Post Checklist Comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### Build Progress Checklist
+            - [ ] Self-check: Please confirm by clicking this checkbox or commenting `/self-check-done`.
+            #### Status: **Waiting for self-check**
