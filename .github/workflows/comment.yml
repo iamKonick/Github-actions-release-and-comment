@@ -1,28 +1,25 @@
-# .github/workflows/comment-on-pr.yml
-name: Comment on Pull Request
+# .github/workflows/post-initial-comment.yml
+name: Post Initial Checklist
 
 on:
   pull_request:
-    types: [opened, synchronize] # Triggers when a PR is opened or updated
+    types: [opened, synchronize]
+
 permissions:
   contents: write
   pull-requests: write
-
 
 jobs:
   post-comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Post a Comment
+      - name: Post Checklist Comment
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Hello, thank you for submitting this pull request! 👋
-            
-            - Please ensure all checks pass before merging.
-            - If you have any questions, feel free to ask here.
-
-            Have a great day! 🌟
+            ### Build Progress Checklist
+            - [ ] Self-check: Please confirm by clicking this checkbox or commenting `/self-check-done`.
+            #### Status: **Waiting for self-check**
