@@ -1,3 +1,4 @@
+# .github/workflows/post-comment.yml
 name: Post Checklist Comment
 
 on:
@@ -12,8 +13,7 @@ jobs:
         uses: peter-evans/create-or-update-comment@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          issue-number: ${{ github.event.number }}
+          issue-number: ${{ github.event.pull_request.number }}
           body: |
             ### Build Progress Checklist
             - [ ] Step 1: Developer has reviewed and checked this box.
