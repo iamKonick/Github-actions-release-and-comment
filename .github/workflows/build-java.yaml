@@ -2,8 +2,10 @@
 name: Build Maven Java Application
 
 on:
-  issue_comment:
-    types: [created, edited]
+  workflow_run:
+    workflows: ["Monitor Self-Check"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -11,9 +13,6 @@ permissions:
 
 jobs:
   build-application:
-    if: |
-      ${{ github.event.comment.body == '/self-check-done' }} ||
-      ${{ github.event.comment.body == 'Self-check: Please confirm' && github.event.comment.body.contains('- [x] Self-check') }}
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +23,14 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '11'  # You can change to the required Java version
+
+      - name: Build the application with Maven
+        run: |
+          mvn clean install
+          
+      - name: Run unit tests
+        run: |
+          mvn test
 
       - name: Final Echo
         run: |
