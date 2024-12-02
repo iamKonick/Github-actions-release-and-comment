@@ -1,7 +1,7 @@
 name: Post Checklist Comment
 
 on:
-  push:
+  pull_request:
 
 jobs:
   comment:
