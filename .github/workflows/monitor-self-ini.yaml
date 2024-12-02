@@ -1,0 +1,41 @@
+# .github/workflows/monitor-self-check.yml
+name: Monitor Self-Check
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  monitor-self-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for Self-check Command
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const comment = context.payload.comment.body;
+            const issueNumber = context.issue.number;
+            if (comment.includes('/self-check-done') || comment.includes('- [x] Self-check')) {
+              const comments = await github.issues.listComments({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber
+              });
+              
+              const checklistComment = comments.data.find(c => c.body.includes('Self-check: Please confirm'));
+              if (checklistComment) {
+                const updatedBody = checklistComment.body.replace('**Waiting for self-check**', '**Self-check done**');
+                await github.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: checklistComment.id,
+                  body: updatedBody
+                });
+              }
+            }
