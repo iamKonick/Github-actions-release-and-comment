@@ -11,7 +11,7 @@ jobs:
         uses: hasura/comment-progress@v2.3.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: "my-org/my-repo"
+          repository: "iamKonick/Github-actions-release-and-comment"
           number: ${{ github.event.number }}
           id: thank-you-comment
           message: "Thank you for opening this PR :pray:"
