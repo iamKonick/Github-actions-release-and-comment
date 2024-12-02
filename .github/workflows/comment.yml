@@ -4,6 +4,10 @@ name: Comment on Pull Request
 on:
   pull_request:
     types: [opened, synchronize] # Triggers when a PR is opened or updated
+permissions:
+  contents: write
+  pull-requests: write
+
 
 jobs:
   post-comment:
