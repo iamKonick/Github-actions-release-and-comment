@@ -1,17 +1,24 @@
+# .github/workflows/comment-on-pr.yml
+name: Comment on Pull Request
+
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize] # Triggers when a PR is opened or updated
 
 jobs:
-  thank-user:
-    runs-on: ubuntu-20.04
-    name: Say thanks for the PR
+  post-comment:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: comment on the pull request
-        uses: hasura/comment-progress@v2.3.0
+      - name: Post a Comment
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          repository: "my-org/my-repo"
-          number: ${{ github.event.number }}
-          id: thank-you-comment
-          message: "Thank you for opening this PR :pray:"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Hello, thank you for submitting this pull request! 👋
+            
+            - Please ensure all checks pass before merging.
+            - If you have any questions, feel free to ask here.
+
+            Have a great day! 🌟
