@@ -13,21 +13,26 @@ jobs:
   check-comment:
     runs-on: ubuntu-latest
 
+    outputs:
+      selfCheckDone: ${{ steps.check-output.outputs.selfCheckDone }}
+
     steps:
       - name: Check for Self-Check Command
+        id: check-output
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const comment = context.payload.comment.body;
             if (comment.includes('/self-check-done')) {
-              core.setOutput('selfCheckDone', 'true');
+              return { selfCheckDone: 'true' };
             } else {
-              core.setOutput('selfCheckDone', 'false');
+              return { selfCheckDone: 'false' };
             }
 
   update-comment:
-    if: steps.check-comment.outputs.selfCheckDone == 'true'
+    needs: check-comment
+    if: ${{ needs.check-comment.outputs.selfCheckDone == 'true' }}
     runs-on: ubuntu-latest
 
     steps:
@@ -51,4 +56,3 @@ jobs:
                 comment_id: comment.id,
                 body: updatedBody
               });
-            }
