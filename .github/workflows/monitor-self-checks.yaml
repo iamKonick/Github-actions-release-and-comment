@@ -1,4 +1,3 @@
-# .github/workflows/monitor-self-check.yml
 name: Monitor Self-Check
 
 on:
@@ -25,14 +24,14 @@ jobs:
           script: |
             const comment = context.payload.comment.body;
             if (comment.includes('/self-check-done')) {
-              return { selfCheckDone: 'true' };
+              core.setOutput('selfCheckDone', 'true');
             } else {
-              return { selfCheckDone: 'false' };
+              core.setOutput('selfCheckDone', 'false');
             }
 
   update-comment:
     needs: check-comment
-    if: ${{ needs.check-comment.outputs.selfCheckDone == 'true' }}
+    if: ${{ steps.check-comment.outputs.selfCheckDone == 'true' }} # Corrected reference to step output
     runs-on: ubuntu-latest
 
     steps:
@@ -56,3 +55,4 @@ jobs:
                 comment_id: comment.id,
                 body: updatedBody
               });
+            }
