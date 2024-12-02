@@ -1,0 +1,37 @@
+# .github/workflows/monitor-checkbox.yml
+name: Monitor Checkbox
+
+on:
+  issues:
+    types: [edited]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  monitor-checkbox:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check for Self-Check Checkbox
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.issue.number;
+            const comments = await github.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber
+            });
+            const comment = comments.data.find(c => c.body.includes('Self-check: Please confirm'));
+            if (comment && comment.body.includes('- [x] Self-check')) {
+              const updatedBody = comment.body.replace('**Waiting for self-check**', '**All checks have passed**');
+              await github.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment.id,
+                body: updatedBody
+              });
+            }
