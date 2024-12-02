@@ -1,24 +1,17 @@
-# .github/workflows/post-comment.yml
-name: Post Checklist Comment
-
 on:
   pull_request:
-    branches:
-      - main
+    types: [opened]
 
 jobs:
-  comment:
-    runs-on: ubuntu-latest
-
+  thank-user:
+    runs-on: ubuntu-20.04
+    name: Say thanks for the PR
     steps:
-      - name: Post Checklist Comment
-        uses: peter-evans/create-or-update-comment@v3
+      - name: comment on the pull request
+        uses: hasura/comment-progress@v2.3.0
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            ### Build Progress Checklist
-            - [ ] Step 1: Developer has reviewed and checked this box.
-            - [ ] Step 2: Build process in progress.
-            - [ ] Step 3: Build complete.
-            #### Status: Step 1 of 3 is completed.
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          repository: "my-org/my-repo"
+          number: ${{ github.event.number }}
+          id: thank-you-comment
+          message: "Thank you for opening this PR :pray:"
