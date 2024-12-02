@@ -2,8 +2,6 @@ name: Post Checklist Comment
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   comment:
