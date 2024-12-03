@@ -20,6 +20,5 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            ### Build Progress Checklist
-            - [ ] Self-check: Please confirm by clicking this checkbox or commenting `/self-check-done`.
-            #### Status: **Waiting for self-check**
+            ### Progress Checklist
+            - Please perform a thorough self-review of your pull request before submitting it for further review. Once completed, enter the comment: /self-reviewed
