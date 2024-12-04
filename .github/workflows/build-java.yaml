@@ -6,32 +6,25 @@ on:
     workflows: ["Monitor Self-Check"]
     types:
       - completed
-
-permissions:
-  contents: write
-  pull-requests: write
-
+    
 jobs:
-  build-application:
-    runs-on: ubuntu-latest
-
+  task-check:
+    runs-on: [self-hosted, Linux-ADC]
+    permissions: write-all
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Set up JDK
-        uses: actions/setup-java@v3
+      - uses: kentaro-m/task-completed-checker-action@v0.1.2
         with:
-          java-version: '11'  # You can change to the required Java version
-
-      - name: Build the application with Maven
-        run: |
-          mvn clean install
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
           
-      - name: Run unit tests
-        run: |
-          mvn test
+  build_and_test:
+    runs-on: [self-hosted, Linux-ADC]
+    steps:
+      - uses: actions/checkout@v4
 
-      - name: Final Echo
-        run: |
-          echo "Application Built Done"
+      - name: Set up JDK 18
+        uses: actions/setup-java@v1
+        with:
+          java-version: 18
+
+      - name: Test project with Maven
+        run: mvn clean install
