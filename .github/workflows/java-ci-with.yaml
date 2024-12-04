@@ -11,7 +11,7 @@ permissions:
 jobs:
   build:
 
-    runs-on: [self-hosted, Linux-ADC]
+    runs-on: ubuntu-latest
     permissions: write-all
 
     steps:
